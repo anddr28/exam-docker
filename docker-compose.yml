@@ -8,7 +8,8 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      # Снаружи 5434, т.к. 5432 на этом ПК занят локальным PostgreSQL. Внутри сети compose — всё равно db:5432
+      - "${DB_PORT:-5434}:5432"
     # Проверка готовности БД: web стартует только когда pg_isready отвечает OK
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bookshop -d bookshop"]

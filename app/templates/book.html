@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-{% block title %}{{ book.title }}{% endblock %}
+{% set name, _, author = book.title.partition(' — ') %}
+{% block title %}{{ name }} — Книжный магазин{% endblock %}
 {% block content %}
-<p><a href="/">← К каталогу</a></p>
-<div class="card">
-  <h1>{{ book.title }}</h1>
-  <p class="muted">Артикул: #{{ book.id }}</p>
-  <p class="price">{{ book.price }} ₽</p>
-  <p>В наличии: <b>{{ book.stock }}</b> шт.</p>
-  <a class="btn" href="/orders/new?book_id={{ book.id }}"
-     {% if book.stock == 0 %}aria-disabled="true"{% endif %}>
-    {% if book.stock > 0 %}Заказать{% else %}Нет в наличии{% endif %}
-  </a>
-</div>
+<a class="back" href="/">← Каталог</a>
+<h1>{{ name }}</h1>
+<dl>
+  {% if author %}<dt>Автор</dt><dd>{{ author }}</dd>{% endif %}
+  <dt>Цена</dt><dd>{{ book.price }} ₽</dd>
+  <dt>В наличии</dt><dd>{{ book.stock }} шт.</dd>
+  <dt>Артикул</dt><dd>{{ book.id }}</dd>
+</dl>
+{% if book.stock > 0 %}
+<a class="btn" href="/orders/new?book_id={{ book.id }}">Заказать</a>
+{% else %}
+<span class="btn disabled">Нет в наличии</span>
+{% endif %}
 {% endblock %}

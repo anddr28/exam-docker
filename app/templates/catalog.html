@@ -1,17 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Каталог — Книжный магазин{% endblock %}
 {% block content %}
-<h1>Каталог книг</h1>
-<div class="grid">
-  {% for book in books %}
-  <div class="card">
-    <h3><a href="/books/{{ book.id }}">{{ book.title }}</a></h3>
-    <p class="price">{{ book.price }} ₽</p>
-    <p class="muted">В наличии: {{ book.stock }} шт.</p>
-    <a class="btn" href="/books/{{ book.id }}">Подробнее</a>
-  </div>
-  {% else %}
-  <p>Каталог пуст.</p>
-  {% endfor %}
-</div>
+<h1>Каталог</h1>
+{% if books %}
+<table>
+  <thead>
+    <tr><th>Книга</th><th class="num">Цена</th><th class="num">В наличии</th></tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+    {% set name, _, author = book.title.partition(' — ') %}
+    <tr>
+      <td>
+        <a href="/books/{{ book.id }}">{{ name }}</a>
+        {% if author %}<div class="muted">{{ author }}</div>{% endif %}
+      </td>
+      <td class="num">{{ book.price }} ₽</td>
+      <td class="num">{% if book.stock %}{{ book.stock }} шт.{% else %}<span class="muted">нет</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">Каталог пуст.</p>
+{% endif %}
 {% endblock %}

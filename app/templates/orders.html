@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Заказы — Книжный магазин{% endblock %}
 {% block content %}
-<h1>Список заказов</h1>
+<h1>Заказы</h1>
 {% if orders %}
 <table>
   <thead>
-    <tr><th>№</th><th>Книга</th><th>Кол-во</th><th>Сумма</th><th>Дата</th></tr>
+    <tr>
+      <th>№</th><th>Книга</th><th class="num">Кол-во</th><th class="num">Сумма</th><th class="num hide-sm">Дата</th>
+    </tr>
   </thead>
   <tbody>
     {% for o in orders %}
     <tr>
-      <td><a href="/orders/{{ o.id }}">#{{ o.id }}</a></td>
-      <td><a href="/books/{{ o.book.id }}">{{ o.book.title }}</a></td>
-      <td>{{ o.quantity }}</td>
-      <td>{{ o.book.price * o.quantity }} ₽</td>
-      <td>{{ o.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+      <td><a href="/orders/{{ o.id }}">{{ o.id }}</a></td>
+      <td>{{ o.book.title.partition(' — ')[0] }}</td>
+      <td class="num">{{ o.quantity }}</td>
+      <td class="num">{{ o.book.price * o.quantity }} ₽</td>
+      <td class="num muted hide-sm">{{ o.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% else %}
-<p>Заказов пока нет. <a href="/orders/new">Оформить первый</a></p>
+<p class="empty">Заказов пока нет. <a href="/orders/new">Оформить заказ</a></p>
 {% endif %}
 {% endblock %}
