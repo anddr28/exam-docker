@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, Numeric, String, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
@@ -20,6 +20,9 @@ class Book(Base):
     stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     orders: Mapped[list["Order"]] = relationship(back_populates="book")
+    reviews: Mapped[list["Review"]] = relationship(
+        back_populates="book", order_by="Review.created_at.desc()"
+    )
 
 
 class Order(Base):
@@ -37,3 +40,23 @@ class Order(Base):
     )
 
     book: Mapped[Book] = relationship(back_populates="orders")
+
+
+class Review(Base):
+    __tablename__ = "reviews"
+    __table_args__ = (CheckConstraint("rating BETWEEN 1 AND 5", name="ck_reviews_rating_range"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Внешний ключ: отзыв относится к книге; при удалении книги удаляются и её отзывы
+    book_id: Mapped[int] = mapped_column(
+        ForeignKey("books.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    author: Mapped[str] = mapped_column(String(100), nullable=False)
+    rating: Mapped[int] = mapped_column(Integer, nullable=False)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    book: Mapped[Book] = relationship(back_populates="reviews")

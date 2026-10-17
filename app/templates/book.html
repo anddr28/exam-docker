@@ -10,6 +10,7 @@
   <dt>В наличии</dt><dd>{{ book.stock }} шт.</dd>
   <dt>Артикул</dt><dd>{{ book.id }}</dd>
 </dl>
+<p><a href="/books/{{ book.id }}/reviews">Отзывы ({{ book.reviews | length }})</a></p>
 {% if book.stock > 0 %}
 <a class="btn" href="/orders/new?book_id={{ book.id }}">Заказать</a>
 {% else %}

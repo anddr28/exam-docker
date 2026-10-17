@@ -37,6 +37,39 @@ def book_page(book_id: int, request: Request, db: Session = Depends(get_db)):
     """Страница 2. Карточка книги."""
     return templates.TemplateResponse(request, "book.html", {"book": crud.get_book(db, book_id)})
 
+@app.get("/books/{book_id}/reviews", response_class=HTMLResponse)
+def reviews_page(book_id: int, request: Request, db: Session = Depends(get_db)):
+    """Страница 6. Отзывы о книге."""
+    return templates.TemplateResponse(
+        request, "reviews.html", {"book": crud.get_book(db, book_id), "form": {}, "error": None}
+    )
+
+
+@app.post("/books/{book_id}/reviews", response_class=HTMLResponse)
+def reviews_submit(
+    book_id: int,
+    request: Request,
+    author: str = Form(""),
+    rating: int = Form(...),
+    text: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    try:
+        data = schemas.ReviewCreate(author=author, rating=rating, text=text)
+        crud.create_review(db, book_id, data)
+    except ValidationError:
+        error = "Заполните имя и текст отзыва, оценка — от 1 до 5"
+    else:
+        return RedirectResponse(f"/books/{book_id}/reviews", status_code=303)
+    return templates.TemplateResponse(
+        request,
+        "reviews.html",
+        {"book": crud.get_book(db, book_id),
+         "form": {"author": author, "rating": rating, "text": text},
+         "error": error},
+        status_code=400,
+    )
+
 
 @app.get("/orders", response_class=HTMLResponse)
 def orders_page(request: Request, db: Session = Depends(get_db)):

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set name = book.title.partition(' — ')[0] %}
+{% block title %}Отзывы: {{ name }} — Книжный магазин{% endblock %}
+{% block content %}
+<a class="back" href="/books/{{ book.id }}">← {{ name }}</a>
+<h1>Отзывы о книге «{{ name }}»</h1>
+
+{% if book.reviews %}
+<p class="muted">
+  Средняя оценка {{ '%.1f' | format(book.reviews | sum(attribute='rating') / book.reviews | length) }} из 5
+  · отзывов: {{ book.reviews | length }}
+</p>
+{% for r in book.reviews %}
+<div class="review">
+  <strong>{{ r.author }}</strong>
+  <span class="muted">· оценка {{ r.rating }}/5 · {{ r.created_at.strftime('%d.%m.%Y') }}</span>
+  <p>{{ r.text }}</p>
+</div>
+{% endfor %}
+{% else %}
+<p class="empty">Отзывов пока нет.</p>
+{% endif %}
+
+<h2>Оставить отзыв</h2>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form method="post" action="/books/{{ book.id }}/reviews">
+  <label for="author">Ваше имя</label>
+  <input id="author" name="author" value="{{ form.author or '' }}" maxlength="100" required>
+
+  <label for="rating">Оценка</label>
+  <select id="rating" name="rating">
+    {% for n in [5, 4, 3, 2, 1] %}
+    <option value="{{ n }}" {% if form.rating == n %}selected{% endif %}>{{ n }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="text">Отзыв</label>
+  <textarea id="text" name="text" rows="4" maxlength="2000" required>{{ form.text or '' }}</textarea>
+
+  <button class="btn" type="submit">Отправить</button>
+</form>
+{% endblock %}

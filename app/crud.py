@@ -55,3 +55,12 @@ def create_order(db: Session, data: schemas.OrderCreate) -> models.Order:
     db.commit()
     db.refresh(order)
     return order
+
+
+def create_review(db: Session, book_id: int, data: schemas.ReviewCreate) -> models.Review:
+    book = get_book(db, book_id)  # 404, если книги нет
+    review = models.Review(book_id=book.id, **data.model_dump())
+    db.add(review)
+    db.commit()
+    db.refresh(review)
+    return review

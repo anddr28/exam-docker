@@ -33,7 +33,18 @@ price   NUMERIC(10,2) >0      quantity    INT > 0
 stock   INT >= 0              created_at  TIMESTAMPTZ DEFAULT now()
 ```
 
-Связь **один-ко-многим**: у одной книги может быть много заказов, каждый заказ ссылается ровно на одну книгу.
+```
+reviews
+──────────────────────────────
+id          SERIAL PK
+book_id     INT FK → books.id (ON DELETE CASCADE)
+author      VARCHAR(100)
+rating      INT, 1..5
+text        TEXT
+created_at  TIMESTAMPTZ DEFAULT now()
+```
+
+Связь **один-ко-многим**: у одной книги может быть много заказов и отзывов, каждый заказ и отзыв ссылается ровно на одну книгу.
 `ON DELETE RESTRICT` не даёт удалить книгу, по которой есть заказы.
 Ограничения `price > 0`, `quantity > 0` продублированы и в БД (CHECK), и в Pydantic (`Field(gt=0)`).
 
@@ -46,6 +57,7 @@ stock   INT >= 0              created_at  TIMESTAMPTZ DEFAULT now()
 | 3 | Список заказов      | `GET /orders`              |
 | 4 | Страница заказа     | `GET /orders/{id}`         |
 | 5 | Оформление заказа   | `GET /orders/new`, `POST /orders/new` |
+| 6 | Отзывы о книге      | `GET /books/{id}/reviews`, `POST /books/{id}/reviews` |
 
 ### REST API (JSON)
 

@@ -27,3 +27,10 @@ class OrderOut(BaseModel):
     quantity: int
     created_at: datetime
     book: BookOut
+
+
+class ReviewCreate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)  # "   " не пройдёт как текст
+    author: str = Field(min_length=1, max_length=100)
+    rating: int = Field(ge=1, le=5)  # оценка от 1 до 5
+    text: str = Field(min_length=1, max_length=2000)
