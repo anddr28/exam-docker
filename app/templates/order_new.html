@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Оформление заказа{% endblock %}
+{% block content %}
+<h1>Оформление заказа</h1>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form class="card" method="post" action="/orders/new">
+  <label for="book_id">Книга</label>
+  <select id="book_id" name="book_id" required>
+    {% for b in books %}
+    <option value="{{ b.id }}" {% if b.id == selected %}selected{% endif %} {% if b.stock == 0 %}disabled{% endif %}>
+      {{ b.title }} — {{ b.price }} ₽ (осталось {{ b.stock }})
+    </option>
+    {% endfor %}
+  </select>
+
+  <label for="quantity">Количество</label>
+  <input id="quantity" name="quantity" type="number" value="{{ quantity }}" required>
+
+  <p><button class="btn" type="submit">Оформить</button></p>
+</form>
+{% endblock %}

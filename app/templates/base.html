@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Книжный магазин{% endblock %}</title>
+  <style>
+    :root { --bg:#f7f5f0; --card:#fff; --text:#222; --muted:#777; --accent:#2f6f4f; --err:#b3261e; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text); }
+    header { background:var(--accent); color:#fff; padding:14px 24px; display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+    header a { color:#fff; text-decoration:none; }
+    header .logo { font-weight:700; font-size:1.2rem; margin-right:auto; }
+    main { max-width:960px; margin:24px auto; padding:0 16px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; }
+    .card { background:var(--card); border-radius:10px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+    .muted { color:var(--muted); }
+    .price { font-size:1.2rem; font-weight:600; }
+    .btn { display:inline-block; background:var(--accent); color:#fff; border:0; padding:9px 16px; border-radius:6px; text-decoration:none; cursor:pointer; font-size:1rem; }
+    .btn[aria-disabled="true"] { background:#aaa; pointer-events:none; }
+    table { width:100%; border-collapse:collapse; background:var(--card); }
+    th, td { padding:10px; border-bottom:1px solid #eee; text-align:left; }
+    label { display:block; margin:12px 0 4px; }
+    select, input { padding:8px; font-size:1rem; width:100%; max-width:420px; }
+    .error { background:#fde7e6; color:var(--err); padding:10px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo" href="/">📚 Книжный магазин</a>
+    <a href="/">Каталог</a>
+    <a href="/orders">Заказы</a>
+    <a href="/orders/new">Оформить заказ</a>
+    <a href="/docs">API</a>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

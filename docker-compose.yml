@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bookshop
+      POSTGRES_PASSWORD: bookshop
+      POSTGRES_DB: bookshop
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    # Проверка готовности БД: web стартует только когда pg_isready отвечает OK
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookshop -d bookshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  web:
+    build: .
+    environment:
+      # Хост "db" — имя сервиса во внутренней сети compose
+      DATABASE_URL: postgresql+psycopg2://bookshop:bookshop@db:5432/bookshop
+    ports:
+      - "${WEB_PORT:-8000}:8000"   # если 8000 занят: WEB_PORT=8010 docker compose up
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
